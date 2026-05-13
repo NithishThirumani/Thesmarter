@@ -1,0 +1,12 @@
+# Root-level overrides for monorepo
+.env
+.env.*
+!.env.example
+.env-bkp
+.env.backup
+*.pem
+.DS_Store
+Thumbs.db
+
+# Local Docker MySQL/MariaDB data volume — never commit
+db_data/

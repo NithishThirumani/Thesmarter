@@ -1,0 +1,92 @@
+# Admin API (Laravel): PHP-FPM with GD (avatars). Rebuild after Dockerfile changes: docker compose build app
+# Set APP_URL in admin-backend/.env to the URL clients use to reach nginx (e.g. http://localhost) so storage URLs work.
+#
+# Deferred bulk imports: set admin-backend/.env QUEUE_CONNECTION=database, run migrations, then `docker compose up -d queue`
+# (or use QUEUE_CONNECTION=sync so jobs run in the web request — fine for small files).
+services:
+  app:
+    build:
+      context: ./docker/php
+    container_name: thesmartr-backend
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./admin-backend:/var/www
+    depends_on:
+      - db
+    environment:
+      # Set to 1 only in trusted local dev if you want migrate on every app container start.
+      RUN_MIGRATE_ON_START: "0"
+    networks:
+      - thesmartr
+
+  # Laravel queue worker — use with QUEUE_CONNECTION=database (see admin-backend/.env.example).
+  queue:
+    build:
+      context: ./docker/php
+    container_name: thesmartr-queue
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./admin-backend:/var/www
+    depends_on:
+      - db
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--max-time=3600"]
+    networks:
+      - thesmartr
+
+  frontend:
+    image: node:20-alpine
+    container_name: thesmartr-frontend
+    working_dir: /usr/src/app
+    # Vite proxies /api → Laravel nginx; localhost inside this container is wrong — use the webserver service.
+    environment:
+      VITE_API_PROXY_TARGET: http://webserver
+    volumes:
+      - ./admin-frontend:/usr/src/app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    networks:
+      - thesmartr
+
+  webserver:
+    image: nginx:alpine
+    container_name: thesmartr-webserver
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./admin-backend:/var/www
+      - ./admin-frontend:/usr/src/app
+      - ./docker/nginx/laravel.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/nginx/react.conf:/etc/nginx/conf.d/react.conf
+    depends_on:
+      - app
+      - frontend
+    networks:
+      - thesmartr
+
+  db:
+    image: mariadb:10.5
+    container_name: thesmartr-database
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: THESMARTR
+      MYSQL_USER: thsroot
+      MYSQL_PASSWORD: bizwy2018$
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./db_data:/var/lib/mysql # <-- local directory for persistent data
+    networks:
+      - thesmartr
+
+volumes:
+  dbdata:
+
+
+networks:
+  thesmartr:
+    driver: bridge

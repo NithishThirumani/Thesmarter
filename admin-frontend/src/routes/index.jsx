@@ -1,0 +1,52 @@
+/**
+ * Route paths and config. Unprotected: /login. Protected: all under DashboardLayout.
+ */
+export const ROUTES = {
+  LOGIN: "/login",
+  DASHBOARD: "/dashboard",
+  TENANTS: "/tenants",
+  COMPANY: "/company",
+  COMPANY_NEW: "/company/new",
+  COMPANY_DETAIL: "/company/:id",
+  LINE_OF_BUSINESS: "/line-of-business",
+  LINE_OF_BUSINESS_NEW: "/line-of-business/new",
+  LINE_OF_BUSINESS_DETAIL: "/line-of-business/:id",
+  FEATURES: "/features",
+  SUPERUSERS: "/superusers",
+  PLATFORM_ADMIN: "/platform-admin",
+  PAYMENTS: "/payments",
+  TAX: "/tax",
+  CATALOGUE: "/catalogue",
+  EMAIL: "/email",
+  AGENTS: "/agents",
+  INTEGRATIONS: "/integrations",
+  AUDIT: "/audit",
+  NOTIFICATIONS: "/notifications",
+  ROLES: "/roles",
+  SETTINGS: "/settings",
+};
+
+/** Path -> label for Topbar */
+export const PATH_LABELS = {
+  [ROUTES.DASHBOARD]: "Dashboard",
+  [ROUTES.TENANTS]: "Tenants",
+  [ROUTES.COMPANY]: "Companies",
+  [ROUTES.COMPANY_NEW]: "New Company",
+  [ROUTES.COMPANY_DETAIL]: "Company Details",
+  [ROUTES.LINE_OF_BUSINESS]: "Line of Business",
+  [ROUTES.LINE_OF_BUSINESS_NEW]: "New Line of Business",
+  [ROUTES.LINE_OF_BUSINESS_DETAIL]: "Line of Business Details",
+  [ROUTES.FEATURES]: "Features",
+  [ROUTES.SUPERUSERS]: "Super Users",
+  [ROUTES.PLATFORM_ADMIN]: "Super admins",
+  [ROUTES.PAYMENTS]: "Payments",
+  [ROUTES.TAX]: "Tax",
+  [ROUTES.CATALOGUE]: "Catalogue",
+  [ROUTES.EMAIL]: "Email",
+  [ROUTES.AGENTS]: "Agents",
+  [ROUTES.INTEGRATIONS]: "Integrations",
+  [ROUTES.AUDIT]: "Audit",
+  [ROUTES.NOTIFICATIONS]: "Notifications",
+  [ROUTES.ROLES]: "Roles",
+  [ROUTES.SETTINGS]: "Settings",
+};
